@@ -15,9 +15,8 @@ def get_ratings(soup,cards):
     ratings = []
     for x in ratings_html:
         ratings.append(x["data-rating"])
-# Parse things about each item and put it in a csv
+    return ratings
 # h4 class="price float-end card-title pull-right" for costs
-# p  data-rating="4" 
 def main():
     html = get_html()
     soup = BeautifulSoup(html, 'html.parser')
