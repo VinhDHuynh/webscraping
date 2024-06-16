@@ -8,37 +8,24 @@ def get_html():
     html_bytes = page.read()
     html = html_bytes.decode("utf-8")
     return html
-
-def get_ratings(soup, cards):
-    # find all pg tags with a data-rating attribute
-    ratings_html = soup.find_all("p", {"data-rating" : re.compile(r".*")}) 
-    ratings = []
-    for rating in ratings_html:
-        ratings.append(rating["data-rating"])
-    return ratings
-
-def get_costs(soup, cards):
-    costs_html = soup.find_all("h4", {"class" : "price float-end card-title pull-right"})
-    costs = []
-    for cost in costs_html:
-        costs.append(cost.string)
-    return costs
-
-def get_names(soup, cards):
-    names_html = soup.find_all("a", {"class" : "title"})
-    names = []
-    for name in names_html:
-        names.append(name["title"])
-    return names
+    
+def get_attributes(soup, cards, tag:str, key:str, value, desired_val:str, enclosed:bool=False) -> list:
+    attrs_html = soup.find_all(tag, {key : value})
+    attrs = []
+    for attr in attrs_html:
+        if enclosed:
+            attrs.append(attr.string)
+        else:
+            attrs.append(attr[desired_val])    
+    return attrs
 
 def main():
     html = get_html()
     soup = BeautifulSoup(html, 'html.parser')
     cards = soup.find_all("div", {"class":"product-wrapper card-body"})
-    ratings = get_ratings(soup, cards)
-    costs = get_costs(soup, cards)
-    names = get_names(soup, cards)
-    print(names)
+    ratings = get_attributes(soup, cards, "p", "data-rating", re.compile(r".*"), "data-rating")
+    costs = get_attributes(soup, cards, "h4", "class", "price float-end card-title pull-right", None, True)
+    names = get_attributes(soup, cards,"a", "class", "title", "title")
     
 if __name__ == "__main__":
     main()
