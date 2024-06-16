@@ -9,7 +9,7 @@ def get_html():
     html = html_bytes.decode("utf-8")
     return html
 
-def get_ratings(soup,cards):
+def get_ratings(soup, cards):
     # find all pg tags with a data-rating attribute
     ratings_html = soup.find_all("p", {"data-rating" : re.compile(r".*")}) 
     ratings = []
@@ -17,12 +17,19 @@ def get_ratings(soup,cards):
         ratings.append(x["data-rating"])
     return ratings
 # h4 class="price float-end card-title pull-right" for costs
+def get_costs(soup, cards):
+    costs_html = soup.find_all("h4", {"class" : "price float-end card-title pull-right"})
+    costs = []
+    for cost in costs_html:
+        costs.append(cost.string)
+    return costs
+
 def main():
     html = get_html()
     soup = BeautifulSoup(html, 'html.parser')
     cards = soup.find_all("div", {"class":"product-wrapper card-body"})
     ratings = get_ratings(soup, cards)
-
+    costs = get_costs(soup, cards)
 
 if __name__ == "__main__":
     main()
